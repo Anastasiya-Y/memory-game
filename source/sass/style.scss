@@ -1,0 +1,16 @@
+// Global
+@import "utils/variables";
+@import "utils/mixins.scss";
+@import "utils/normalize";
+@import "utils/reboot";
+@import "utils/fonts";
+@import "utils/container.scss";
+@import "utils/utils.scss";
+
+// Blocks
+@import "blocks/header.scss";
+@import "blocks/button.scss";
+@import "blocks/game.scss";
+@import "blocks/card.scss";
+@import "blocks/footer.scss";
+@import "blocks/counter.scss";

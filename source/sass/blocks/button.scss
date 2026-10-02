@@ -1,0 +1,22 @@
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: $color-pale-taupe;
+    color: $color-black;
+    padding: 10px;
+    min-width: 200px;
+    font-weight: 600;
+    transition: all $trans-300 ease-in;
+    user-select: none;
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    text-transform: uppercase;
+
+    @include hover {
+        &:hover {
+          background-color: $color-medium-wood;
+        }
+    }
+}

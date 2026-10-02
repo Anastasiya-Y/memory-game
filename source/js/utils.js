@@ -1,6 +1,6 @@
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-const createNode = (tag, text, classNames = [], attributes = []) => {
+const createNode = (tag, text, classNames = [], attributes = {}) => {
   const node = document.createElement(tag);
 
   if (text !== null) {
@@ -11,9 +11,11 @@ const createNode = (tag, text, classNames = [], attributes = []) => {
     node.classList.add(className);
   });
 
-  attributes.forEach(({name, value}) => {
-    node.setAttribute(name, value);
-  });
+  for (const [name, value] of Object.entries(attributes)) {
+    if (value !== null) {
+      node.setAttribute(name, value);
+    }
+  }
 
   return node;
 };

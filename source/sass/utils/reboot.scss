@@ -1,0 +1,44 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100dvh;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-style: normal;
+  font-weight: 400;
+  font-size: $fz-default;
+  line-height: 24px;
+  font-family: $ff-inter;
+  color: $color-space-shuttle;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: $color-pearl-bush;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: $color-space-shuttle;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+main {
+  flex: 1;
+}
