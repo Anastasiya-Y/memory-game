@@ -25,7 +25,11 @@ const resetGameState = () => {
   firstCardNode = null;
   firstCardName = null;
   clicksAreBlocked = false;
-  clearTimeout(flipTimeoutId);
+
+  if (flipTimeoutId) {
+    clearTimeout(flipTimeoutId);
+    flipTimeoutId = null;
+  }
 };
 
 const handleCurrentCard = (cardNode) => {
@@ -121,14 +125,16 @@ const startGame = (cardsListNode, cardNodes) => {
 const initGame = (root) => {
   const cardsListNode = root.querySelector('.js-cards-list');
   const cardNodes = cardsListNode && [...cardsListNode.querySelectorAll('.card')];
+  const newGameBtnNode = root.querySelector('.js-new-game');
   movesCounterNode = root.querySelector('.js-moves-counter');
   pairsCounterNode = root.querySelector('.js-pairs-counter');
 
-  if (!cardsListNode || !cardNodes.length || !movesCounterNode || !pairsCounterNode) {
+  if (!cardsListNode || !cardNodes.length || !movesCounterNode || !pairsCounterNode || !newGameBtnNode) {
     return;
   }
 
   cardsListNode.addEventListener('click', handleCardsListNodeClick);
+  newGameBtnNode.addEventListener('click', () => startGame(cardsListNode, cardNodes));
 
   startGame(cardsListNode, cardNodes);
 };
