@@ -11,6 +11,12 @@
     transform-style: preserve-3d;
   }
 
+  &.flipped,
+  &.matched {
+    pointer-events: none;
+    cursor: default;
+  }
+
   &.flipped &__content,
   &.matched &__content {
     transform: rotateY(180deg);

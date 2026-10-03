@@ -34,11 +34,22 @@ const createCard = (item) => {
   return cardNode;
 };
 
+const createCounterNode = (text, specialClass) => {
+  const counterWrapperNode = createNode('div', '', ['counter']);
+
+  const infoNode = createNode('span', text, ['counter__info']);
+  const countNode = createNode('span', '0', ['counter__number', `${specialClass}`]);
+
+  counterWrapperNode.append(infoNode, countNode);
+
+  return counterWrapperNode;
+};
+
 const createMainLayout = () => {
   const mainNode = createNode('main', '', ['game__main']);
-  const titleNode = createNode('h1', 'Memory game', ['game__title'])
+  const titleNode = createNode('h1', 'Memory game', ['game__title']);
 
-  const gridNode = createNode('div', '', ['game__cards-list', 'cards-list']);
+  const gridNode = createNode('div', '', ['game__cards-list', 'cards-list', 'js-cards-list']);
 
   cards.forEach((item) => {
     const cardNode = createCard(item);
@@ -56,17 +67,6 @@ const createMainLayout = () => {
   mainNode.append(titleNode, gridNode, countersNode);
 
   return mainNode;
-};
-
-const createCounterNode = (text, specialClass) => {
-  const counterWrapperNode = createNode('div', '', ['counter']);
-
-  const infoNode = createNode('span', text, ['counter__info']);
-  const countNode = createNode('span', '0', ['counter__number', `${specialClass}`]);
-
-  counterWrapperNode.append(infoNode, countNode);
-
-  return counterWrapperNode;
 };
 
 const createFooter = () => {
@@ -92,6 +92,8 @@ const initLayout = () => {
   containerNode.append(wrapperNode);
 
   document.body.append(containerNode);
+
+  return containerNode;
 };
 
 export {initLayout};
