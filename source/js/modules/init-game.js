@@ -1,10 +1,25 @@
+import {resetCounters, increaseMovesCount, increasePairsCount, getCounterCount} from './init-counters.js';
+
 const MATCHED_CLASS = 'matched';
 const FLIPPED_CLASS = 'flipped';
 const SHOW_CARD_INTERVAL = 1500;
+let movesCounterNode = null;
+let pairsCounterNode = null;
 let firstCardNode = null;
 let firstCardName = null;
 let clicksAreBlocked = false;
 let flipTimeoutId = null;
+
+const resetCountersLayout = () => {
+  movesCounterNode.textContent = '0';
+  pairsCounterNode.textContent = '0';
+};
+
+const updateCounterLayout = (counterName) => {
+  const counterNode = counterName === 'pairs' ? pairsCounterNode : movesCounterNode;
+
+  counterNode.textContent = getCounterCount()[counterName];
+};
 
 const resetGameState = () => {
   firstCardNode = null;
@@ -32,12 +47,17 @@ const handleCurrentCard = (cardNode) => {
     cardNode.classList.add(MATCHED_CLASS);
     firstCardNode.classList.add(MATCHED_CLASS);
     resetGameState();
+    increasePairsCount();
+    updateCounterLayout('pairs');
   } else {
     flipTimeoutId = setTimeout(() => {
       handleFlipCards([firstCardNode, cardNode]);
       resetGameState();
     }, SHOW_CARD_INTERVAL);
   }
+
+  increaseMovesCount();
+  updateCounterLayout('moves');
 };
 
 const handleCardsListNodeClick = (evt) => {
@@ -83,8 +103,8 @@ const handleFlipCards = (cardNodes) => {
   flipCards(cardNodes);
 };
 
-const startGame = (cardsListNode, cardNodes) => {
-  resetGameState();
+const resetLayout = (cardsListNode, cardNodes) => {
+  resetCountersLayout();
 
   handleFlipCards();
   shuffleCards(cardNodes);
@@ -92,11 +112,19 @@ const startGame = (cardsListNode, cardNodes) => {
   cardsListNode.append(...cardNodes);
 };
 
+const startGame = (cardsListNode, cardNodes) => {
+  resetGameState();
+  resetCounters();
+  resetLayout(cardsListNode, cardNodes);
+};
+
 const initGame = (root) => {
   const cardsListNode = root.querySelector('.js-cards-list');
   const cardNodes = cardsListNode && [...cardsListNode.querySelectorAll('.card')];
+  movesCounterNode = root.querySelector('.js-moves-counter');
+  pairsCounterNode = root.querySelector('.js-pairs-counter');
 
-  if (!cardsListNode || !cardNodes.length) {
+  if (!cardsListNode || !cardNodes.length || !movesCounterNode || !pairsCounterNode) {
     return;
   }
 
