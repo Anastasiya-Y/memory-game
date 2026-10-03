@@ -2,6 +2,7 @@ import {resetCounters, increaseMovesCount, increasePairsCount, getCounterCount} 
 
 const MATCHED_CLASS = 'matched';
 const FLIPPED_CLASS = 'flipped';
+const MAX_PAIRS_COUNT = 8;
 const SHOW_CARD_INTERVAL = 1500;
 let movesCounterNode = null;
 let pairsCounterNode = null;
@@ -16,9 +17,11 @@ const resetCountersLayout = () => {
 };
 
 const updateCounterLayout = (counterName) => {
-  const counterNode = counterName === 'pairs' ? pairsCounterNode : movesCounterNode;
+  const isPairsNode = counterName === 'pairs';
+  const counterNode = isPairsNode ? pairsCounterNode : movesCounterNode;
+  const text = getCounterCount()[counterName];
 
-  counterNode.textContent = getCounterCount()[counterName];
+  counterNode.textContent = isPairsNode ? `${text}/${MAX_PAIRS_COUNT}` : text;
 };
 
 const resetGameState = () => {
