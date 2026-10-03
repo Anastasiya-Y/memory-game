@@ -1,6 +1,12 @@
 
-import {createNode} from '../utils.js';
+import {isEscapeKey, createNode} from '../utils.js';
 import {cards} from '../data/cards.js';
+import {createModalNode, closeModal} from './init-modal.js';
+
+const MODAL_SELECTOR = '.modal';
+const CLOSE_BTN_SELECTOR = '.modal__close';
+const WRAPPER_SELECTOR = '.modal__wrapper';
+const CONTENT_SELECTOR = '.modal__content';
 
 const createHeader = () => {
   const headerNode = createNode('header', '', ['game__header', 'header']);
@@ -35,10 +41,11 @@ const createCard = (item) => {
 };
 
 const createCounterNode = (text, specialClass) => {
+  const isPairsNode = text.includes('pairs');
   const counterWrapperNode = createNode('div', '', ['counter']);
 
   const infoNode = createNode('span', text, ['counter__info']);
-  const countNode = createNode('span', '0', ['counter__number', `${specialClass}`]);
+  const countNode = createNode('span', isPairsNode ? '0/8' : '0', ['counter__number', `${specialClass}`]);
 
   counterWrapperNode.append(infoNode, countNode);
 
@@ -80,6 +87,37 @@ const createFooter = () => {
   return footerNode;
 };
 
+const handleEscape = (evt) => {
+  const isEscapeKeyBtn = !isEscapeKey(evt);
+
+  if (isEscapeKeyBtn) {
+    return;
+  }
+
+  closeModal();
+};
+
+const handleModalClick = (evt) => {
+  const modalNode = evt.target.closest(MODAL_SELECTOR);
+
+  if (!modalNode) {
+    return;
+  }
+
+  const isCloseBtn = evt.target.closest(CLOSE_BTN_SELECTOR);
+  const isWrapper = evt.target.closest(WRAPPER_SELECTOR);
+  const isContent = evt.target.closest(CONTENT_SELECTOR);
+
+  if (isCloseBtn || (isWrapper && !isContent)) {
+    closeModal();
+  }
+};
+
+const addBodyEventListeners = () => {
+  document.addEventListener('keydown', handleEscape);
+  document.addEventListener('click', handleModalClick);
+};
+
 const initLayout = () => {
   const containerNode = createNode('div', '', ['container']);
   const wrapperNode = createNode('div', '', ['game']);
@@ -89,9 +127,14 @@ const initLayout = () => {
   const footerNode = createFooter();
 
   wrapperNode.append(headerNode, mainNode, footerNode);
-  containerNode.append(wrapperNode);
 
+  const modalWinNode = createModalNode(createNode, 'win');
+  const modalLeaderBoardNode = createModalNode(createNode, 'leaderboard');
+
+  containerNode.append(wrapperNode, modalWinNode, modalLeaderBoardNode);
   document.body.append(containerNode);
+
+  addBodyEventListeners();
 
   return containerNode;
 };

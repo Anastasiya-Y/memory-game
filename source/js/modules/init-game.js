@@ -1,19 +1,31 @@
+import {createNode} from '../utils.js';
 import {resetCounters, increaseMovesCount, increasePairsCount, getCounterCount} from './init-counters.js';
+import {addResult, getResults} from './init-leaderboard.js';
 
 const MATCHED_CLASS = 'matched';
 const FLIPPED_CLASS = 'flipped';
+const MODAL_OPEN_CLASS = 'is-open';
 const MAX_PAIRS_COUNT = 8;
 const SHOW_CARD_INTERVAL = 1500;
+const EMPTY_RESULTS_TEXT = 'No results found';
+const LEADERBOARD_COLUMNS_COUNT = 3;
+
 let movesCounterNode = null;
 let pairsCounterNode = null;
+let leaderboardModalNode = null;
+let leaderboardBodyNode = null;
+let leaderboardBtnNode = null;
+let winModalNode = null;
+let winTextNode = null;
 let firstCardNode = null;
 let firstCardName = null;
 let clicksAreBlocked = false;
 let flipTimeoutId = null;
+let isGameFinished = false;
 
 const resetCountersLayout = () => {
   movesCounterNode.textContent = '0';
-  pairsCounterNode.textContent = '0';
+  pairsCounterNode.textContent = `0/${MAX_PAIRS_COUNT}`;
 };
 
 const updateCounterLayout = (counterName) => {
@@ -22,6 +34,82 @@ const updateCounterLayout = (counterName) => {
   const text = getCounterCount()[counterName];
 
   counterNode.textContent = isPairsNode ? `${text}/${MAX_PAIRS_COUNT}` : text;
+};
+
+const createLeaderboardRow = (place, moves, date) => {
+  const rowNode = createNode('tr', '', ['leaderboard__row']);
+
+  const placeNode = createNode('td', place, ['leaderboard__cell']);
+  const movesNode = createNode('td', moves, ['leaderboard__cell']);
+  const dateNode = createNode('td', date, ['leaderboard__cell']);
+
+  rowNode.append(placeNode, movesNode, dateNode);
+
+  return rowNode;
+};
+
+const createLeaderboardEmptyRow = () => {
+  const rowNode = createNode('tr');
+  const cellNode = createNode('td', EMPTY_RESULTS_TEXT, ['leaderboard__cell', 'leaderboard__empty'], {'colspan': LEADERBOARD_COLUMNS_COUNT});
+
+  rowNode.append(cellNode);
+
+  return rowNode;
+};
+
+const renderLeaderboardRows = () => {
+  if (!leaderboardBodyNode) {
+    return;
+  }
+
+  leaderboardBodyNode.replaceChildren();
+
+  const results = getResults();
+
+  if (!results.length) {
+    leaderboardBodyNode.append(createLeaderboardEmptyRow());
+    return;
+  }
+
+  results.forEach((result, index) => {
+    const rowNode = createLeaderboardRow(index + 1, result.moves, result.date);
+    leaderboardBodyNode.append(rowNode);
+  });
+};
+
+const openLeaderboardModal = () => {
+  if (!leaderboardModalNode) {
+    return;
+  }
+
+  renderLeaderboardRows();
+  leaderboardModalNode.classList.add(MODAL_OPEN_CLASS);
+};
+
+const showWinModal = (moves) => {
+  if (!winModalNode || !winTextNode) {
+    return;
+  }
+
+  winTextNode.textContent = `You found all the pairs in ${moves} moves!`;
+  winModalNode.classList.add(MODAL_OPEN_CLASS);
+};
+
+const handleWin = () => {
+  isGameFinished = true;
+  const {moves} = getCounterCount();
+
+  addResult(moves);
+  showWinModal(moves);
+};
+
+const checkWin = () => {
+  const allCardNodes = [...document.querySelectorAll('.card')];
+  const isWin = allCardNodes.every((card) => card.classList.contains(MATCHED_CLASS));
+
+  if (isWin) {
+    handleWin();
+  }
 };
 
 const resetGameState = () => {
@@ -65,10 +153,14 @@ const handleCurrentCard = (cardNode) => {
 
   increaseMovesCount();
   updateCounterLayout('moves');
+
+  if (isMatched) {
+    checkWin();
+  }
 };
 
 const handleCardsListNodeClick = (evt) => {
-  if (clicksAreBlocked) {
+  if (clicksAreBlocked || isGameFinished) {
     return;
   }
 
@@ -120,6 +212,7 @@ const resetLayout = (cardsListNode, cardNodes) => {
 };
 
 const startGame = (cardsListNode, cardNodes) => {
+  isGameFinished = false;
   resetGameState();
   resetCounters();
   resetLayout(cardsListNode, cardNodes);
@@ -131,13 +224,19 @@ const initGame = (root) => {
   const newGameBtnNode = root.querySelector('.js-new-game');
   movesCounterNode = root.querySelector('.js-moves-counter');
   pairsCounterNode = root.querySelector('.js-pairs-counter');
+  winModalNode = root.querySelector('.modal__win');
+  winTextNode = winModalNode && winModalNode.querySelector('.modal__text');
+  leaderboardModalNode = root.querySelector('.modal__leaderboard');
+  leaderboardBodyNode = leaderboardModalNode && leaderboardModalNode.querySelector('.js-leaderboard-body');
+  leaderboardBtnNode = root.querySelector('.js-leaderboard');
 
-  if (!cardsListNode || !cardNodes.length || !movesCounterNode || !pairsCounterNode || !newGameBtnNode) {
+  if (!cardsListNode || !cardNodes.length || !movesCounterNode || !pairsCounterNode || !newGameBtnNode || !leaderboardBtnNode) {
     return;
   }
 
   cardsListNode.addEventListener('click', handleCardsListNodeClick);
   newGameBtnNode.addEventListener('click', () => startGame(cardsListNode, cardNodes));
+  leaderboardBtnNode.addEventListener('click', openLeaderboardModal);
 
   startGame(cardsListNode, cardNodes);
 };

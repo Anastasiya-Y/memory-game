@@ -29,6 +29,10 @@ body {
   flex-direction: column;
 }
 
+body:has(.modal.is-open) {
+  overflow: hidden;
+}
+
 a {
   color: $color-space-shuttle;
   text-decoration: none;
