@@ -1,0 +1,14 @@
+.counter {
+  display: inline-flex;
+  gap: 10px;
+  font-size: 26px;
+  line-height: 34px;
+
+  &__info {
+      text-transform: capitalize;
+  }
+
+  &__number {
+    font-weight: 600;
+  }
+}

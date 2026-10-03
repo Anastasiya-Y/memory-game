@@ -1,0 +1,25 @@
+// Typography
+
+$ff-inter: "Inter", "Arial", sans-serif;
+$fz-default: 16px;
+
+// Viewports
+
+$vp-1440: 1440px;
+$vp-768: 768px;
+
+// Colors
+$color-space-shuttle: #403f3d;
+$color-pearl-bush: #e1d4c9;
+$color-black: #000000;
+$color-white: #ffffff;
+$color-pale-taupe: #ba977b;
+$color-medium-wood: #a87759;
+$color-overlay: rgba(0, 0, 0, 0.6);
+
+$bg-gradient: linear-gradient(180deg, rgb(230, 174, 140) 5%, rgb(168, 206, 207) 93%);;
+
+// Animation
+$trans-300: 300ms;
+$tf-default: ease;
+$trans-default: $trans-300 $tf-default;
